@@ -6,7 +6,7 @@ function QuestionList() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    let isMounted = true; // Flag to track if the component is still mounted
+    let isMounted = true;
 
     fetch("http://localhost:4000/questions")
       .then((res) => res.json())
@@ -22,11 +22,14 @@ function QuestionList() {
         }
       });
 
-    // Cleanup function to set `isMounted` to false when the component unmounts
     return () => {
       isMounted = false;
     };
   }, []);
+
+  function handleDelete(id) {
+    setQuestions((prevQuestions) => prevQuestions.filter((q) => q.id !== id));
+  }
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -37,7 +40,7 @@ function QuestionList() {
       <h1>Quiz Questions</h1>
       <ul>
         {questions.map((question) => (
-          <QuestionItem key={question.id} question={question} />
+          <QuestionItem key={question.id} question={question} onDelete={handleDelete} />
         ))}
       </ul>
     </section>

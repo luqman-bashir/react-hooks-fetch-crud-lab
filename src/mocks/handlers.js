@@ -1,22 +1,21 @@
 import { rest } from "msw";
 import { data } from "./data";
 
-let questions = [...data]; // Clone the initial data to avoid mutating the original
+let questions = [...data];
+
+export const resetQuestions = () => {
+  questions = [...data];
+};
 
 export const handlers = [
-  // GET: Fetch all questions
   rest.get("http://localhost:4000/questions", (req, res, ctx) => {
-    return res(
-      ctx.status(200),
-      ctx.json(questions) // Return the list of questions
-    );
+    console.log("GET request received");
+    return res(ctx.status(200), ctx.json(questions));
   }),
 
-  // POST: Add a new question
   rest.post("http://localhost:4000/questions", (req, res, ctx) => {
     const { prompt, answers, correctIndex } = req.body;
 
-    // Validation: Check for missing fields
     if (!prompt || !Array.isArray(answers) || correctIndex === undefined) {
       return res(
         ctx.status(400),
@@ -26,7 +25,6 @@ export const handlers = [
       );
     }
 
-    // Validation: Ensure 'answers' contains at least two options
     if (answers.length < 2) {
       return res(
         ctx.status(400),
@@ -34,52 +32,39 @@ export const handlers = [
       );
     }
 
-    // Create a new question
     const id = questions.length ? questions[questions.length - 1].id + 1 : 1;
     const newQuestion = { id, prompt, answers, correctIndex };
     questions.push(newQuestion);
 
-    return res(
-      ctx.status(201),
-      ctx.json(newQuestion) // Return the newly created question
-    );
+    console.log("New question added:", newQuestion);
+    return res(ctx.status(201), ctx.json(newQuestion));
   }),
 
-  // DELETE: Remove a question
   rest.delete("http://localhost:4000/questions/:id", (req, res, ctx) => {
-    const { id } = req.params;
+    const id = parseInt(req.params.id, 10);
+    const index = questions.findIndex((q) => q.id === id);
 
-    const questionIndex = questions.findIndex((q) => q.id === parseInt(id, 10));
-    if (questionIndex === -1) {
-      return res(
-        ctx.status(404),
-        ctx.json({ message: `Question with id ${id} not found.` })
-      );
+    if (index === -1) {
+      console.error(`Question with id ${id} not found.`);
+      return res(ctx.status(404), ctx.json({ message: `Question with id ${id} not found.` }));
     }
 
-    // Remove the question from the list
-    questions.splice(questionIndex, 1);
+    questions.splice(index, 1);
 
-    return res(
-      ctx.status(200),
-      ctx.json({ message: `Question with id ${id} deleted successfully.` })
-    );
+    console.log(`Question with id ${id} deleted successfully.`);
+    return res(ctx.status(200), ctx.json({ message: `Question with id ${id} deleted successfully.` }));
   }),
 
-  // PATCH: Update a question's correct answer index
   rest.patch("http://localhost:4000/questions/:id", (req, res, ctx) => {
-    const { id } = req.params;
+    const id = parseInt(req.params.id, 10);
     const { correctIndex } = req.body;
 
-    const question = questions.find((q) => q.id === parseInt(id, 10));
+    const question = questions.find((q) => q.id === id);
+
     if (!question) {
-      return res(
-        ctx.status(404),
-        ctx.json({ message: `Question with id ${id} not found.` })
-      );
+      return res(ctx.status(404), ctx.json({ message: `Question with id ${id} not found.` }));
     }
 
-    // Validate 'correctIndex'
     if (
       correctIndex === undefined ||
       correctIndex < 0 ||
@@ -95,9 +80,9 @@ export const handlers = [
       );
     }
 
-    // Update the correctIndex
     question.correctIndex = correctIndex;
 
+    console.log(`Question with id ${id} updated successfully.`);
     return res(
       ctx.status(200),
       ctx.json({
