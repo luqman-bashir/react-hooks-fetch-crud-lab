@@ -15,17 +15,18 @@
     "@babel/preset-env": "^7.26.0",
     "@babel/preset-react": "^7.25.9",
     "@learn-co-curriculum/jest-learn-reporter": "^0.1.0",
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
+    "@testing-library/jest-dom": "^6.0.0",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/user-event": "^14.4.3",
     "babel-jest": "^29.7.0",
+    "jest": "^29.7.0",
     "mocha": "^8.2.1",
     "msw": "^0.24.2"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "echo \".results.json\" && react-scripts test --reporters=@learn-co-curriculum/jest-learn-reporter --reporters=default --watchAll",
+    "test": "jest --reporters=@learn-co-curriculum/jest-learn-reporter --reporters=default",
     "eject": "react-scripts eject",
     "server": "json-server --watch db.json --port=4000"
   },

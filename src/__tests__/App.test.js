@@ -7,6 +7,7 @@ import { resetQuestions } from "../mocks/handlers";
 
 beforeAll(() => server.listen());
 afterEach(() => {
+
   server.resetHandlers();
   resetQuestions();
 });
@@ -100,6 +101,7 @@ describe("App Integration Tests", () => {
 
     // Get all list items
     const listItems = screen.getAllByRole("listitem");
+
 
     // Delete each question one by one
     for (const item of listItems) {
